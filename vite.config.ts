@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 6090,
     proxy: {
-      '/api': 'http://localhost:9060'
+      '/api': 'https://backdrops-api.onrender.com'
     }
   }
 })
