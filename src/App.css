@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+* {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+[data-sonner-toaster] {
+    /*width: 100% !important;*/
+}
+
+:where([data-sonner-toast][data-styled="true"]) {
+    font-size: 1rem !important;
+    border-radius: 1.5rem !important;
+    border: unset !important;
+}
+
+:where([data-sonner-toast]):where([data-content]) {
+
+}
+
+:where([data-sonner-toast]):where([data-title]) {
+    font-weight: unset !important;
+}
+
+[data-rich-colors=true][data-sonner-toast][data-type=error] {
+    color: rgb(255 255 255) !important;
+    background-color: rgb(220 38 38) !important;
+    border-color: rgba(255, 255, 255, 0) !important;
+}
+
+[data-rich-colors=true][data-sonner-toast][data-type=success] {
+    color: rgb(255 255 255) !important;
+    background-color: rgb(22 163 74) !important;
+    border-color: rgba(255, 255, 255, 0) !important;
+}
+
+[data-rich-colors=true][data-sonner-toast][data-type=info] {
+    color: rgb(255 255 255) !important;
+    background-color: rgb(37 99 235) !important;
+    border-color: rgba(255, 255, 255, 0) !important;
+}
+
+[data-rich-colors=true][data-sonner-toast][data-type=warning] {
+    color: rgb(255 255 255) !important;
+    background-color: rgb(202 138 4) !important;
+    border-color: rgba(255, 255, 255, 0) !important;
+}
+
+.reactEasyCrop_Container {
+    position: relative !important;
+    /*border-radius: 9999px;*/
+}
+
+.reactEasyCrop_Contain {
+    position: relative !important;
+    /*border-radius: 9999px;*/
+}
+
+.dots-3 {
+    width: 36px;
+    aspect-ratio: 2;
+    --_g: no-repeat radial-gradient(circle closest-side, #ffffff 90%, #0000);
+    background: var(--_g) 0 50%,
+    var(--_g) 50% 50%,
+    var(--_g) 100% 50%;
+    background-size: calc(100% / 3) 50%;
+    animation: d3 1s infinite linear;
+}
+
+@keyframes d3 {
+    20% {
+        background-position: 0 0, 50% 50%, 100% 50%
+    }
+    40% {
+        background-position: 0 100%, 50% 0, 100% 50%
+    }
+    60% {
+        background-position: 0 50%, 50% 100%, 100% 0
+    }
+    80% {
+        background-position: 0 50%, 50% 50%, 100% 100%
+    }
+}

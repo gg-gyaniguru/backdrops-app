@@ -1,0 +1,115 @@
+import {useRef, useState} from "react";
+import {getKey} from "../utils/local.ts";
+import {toast} from "sonner";
+import edit from '../assets/edit.png'
+import Cropper from "react-easy-crop";
+import axios from "axios";
+import Modal from "./Modal.tsx";
+
+type Upload = {
+    refresh: any
+}
+
+const Upload = ({refresh}: Upload) => {
+
+    const imageRef = useRef(null);
+    const [image, setImage] = useState(null);
+    const [src, setSrc] = useState<any>(null);
+    const [crop, setCrop] = useState({x: 0, y: 0});
+    const [zoom, setZoom] = useState(1);
+
+    const _id = getKey('_id');
+    const accessToken = getKey('accessToken');
+
+
+    const upload = (e: any) => {
+        setImage(URL.createObjectURL(e.target.files[0]) as any);
+    }
+
+    const uploadImage = async () => {
+        if (image) {
+            try {
+                const file = new FormData()
+                file.append('_id', `${_id}`);
+                file.append('image', src);
+                const response = await axios.post(`/api/user/upload`, file, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                });
+                toast.success(response.data.message);
+                refresh();
+            } catch (e: any) {
+                throw new Error(e.response.data.message)
+            }
+        } else {
+            toast.error('image not selected');
+        }
+    }
+
+    const onCropComplete = async (_: any, croppedAreaPixels: any) => {
+        const croppedImage = await getCroppedImage(imageRef.current, croppedAreaPixels);
+        setSrc(croppedImage);
+    };
+
+    const getCroppedImage = (image: any, croppedAreaPixels: any) => {
+        const canvas = document.createElement('canvas');
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = croppedAreaPixels.width;
+        canvas.height = croppedAreaPixels.height;
+        const ctx = canvas.getContext('2d');
+
+        ctx?.drawImage(
+            image,
+            croppedAreaPixels.x * scaleX,
+            croppedAreaPixels.y * scaleY,
+            croppedAreaPixels.width * scaleX,
+            croppedAreaPixels.height * scaleY,
+            0,
+            0,
+            croppedAreaPixels.width,
+            croppedAreaPixels.height
+        );
+
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    reject(new Error('Failed to create blob'));
+                    return;
+                }
+                resolve(blob);
+            }, 'image/png');
+        });
+    };
+
+    return (
+        <>
+            <Modal className={'p-2 rounded-full bg-gray-900'} modalTitle={'change profile'} icon={edit}
+                   action={uploadImage} btn={'Upload'} btnVisible={true}>
+                <div className={'max-h-[30rem] w-full flex flex-col items-center gap-6 overflow-auto'}>
+                    <input
+                        className={'file:mr-3 file:px-3 text-sm file:text-base self-start file:py-1.5 file:text-white  file:rounded-full file:bg-indigo-600 file:border-0 cursor-pointer'}
+                        type={'file'} accept={'image/png, image/jpeg'} onChange={upload}/>
+
+                    {
+                        image &&
+                        <Cropper image={image} onCropChange={setCrop} crop={crop} aspect={1} zoom={zoom}
+                                 onZoomChange={setZoom} cropShape={"round"} onCropComplete={onCropComplete}/>
+
+                    }
+
+                    {
+                        src && <img src={src} alt={''}/>
+                    }
+
+                    <img className={'hidden'} ref={imageRef} src={image as any} alt={''}/>
+
+                </div>
+            </Modal>
+        </>
+    );
+};
+
+export default Upload;
