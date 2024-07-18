@@ -39,6 +39,7 @@ const Account = ({from}: Account) => {
         try {
             const response: Response = await post('user/signup', input);
             action(response);
+            console.log(response);
         } catch (error: any) {
             toast.error(error.message);
         }
