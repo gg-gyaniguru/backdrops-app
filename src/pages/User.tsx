@@ -131,8 +131,10 @@ const User = () => {
                             </span>
                             <span className={'flex justify-between'}>
                                 <button disabled={true}>{shortener(user.drops)} Drops</button>
-                                <Following _id={user._id} title={`${shortener(user.following)} Following`} from={'following'}/>
-                                <Following _id={user._id} title={`${shortener(user.followers)} Followers`} from={'followers'}/>
+                                <Following _id={user._id} title={`${shortener(user.following)} Following`}
+                                           from={'following'}/>
+                                <Following _id={user._id} title={`${shortener(user.followers)} Followers`}
+                                           from={'followers'}/>
                             </span>
                         </div>
                     </div>
@@ -150,7 +152,7 @@ const User = () => {
                     </div>
                 </Container> :
                 <Container className={'h-dvh flex items-center justify-center text-xl opacity-50'}>
-                    user not found
+                    {!isFetching && 'user not found'}
                 </Container>
             }
         </>

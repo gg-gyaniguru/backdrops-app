@@ -3,23 +3,22 @@ import UserProfile from "./UserProfile.tsx";
 import {useEffect, useRef, useState} from "react";
 
 type Users = {
+    isFetching: boolean,
     users: user[],
     fetch: () => void,
     page: number,
     totalPage: number,
 }
 
-const Users = ({users, fetch, page, totalPage}: Users) => {
+const Users = ({isFetching, users, fetch, page, totalPage}: Users) => {
 
-    const [isFetching, setIsFetching] = useState(false);
+    // const [isFetching, setIsFetching] = useState(false);
     const div: any = useRef(null);
 
     const getScroll = async () => {
         if (page <= totalPage) {
             if (div?.current.scrollTop + div.current.clientHeight >= div.current.scrollHeight) {
-                setIsFetching(true);
                 await fetch();
-                setIsFetching(false);
             }
         }
     }
