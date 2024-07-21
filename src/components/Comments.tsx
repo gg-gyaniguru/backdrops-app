@@ -18,6 +18,7 @@ type Comments = {
 
 const Comments = ({drop_id}: Comments) => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const [comments, setComments] = useState<comment[]>([]);
     const [input, setInput] = useState('');
     const [reply_id, setReply_id] = useState('');
@@ -29,11 +30,13 @@ const Comments = ({drop_id}: Comments) => {
 
     const action = async () => {
         try {
-            const response = await get(`/drop/comments/${drop_id}??page=${page}`);
+            setIsFetching(true);
+            const response = await get(`/drop/comments/${drop_id}?page=${page}`);
+            setIsFetching(false);
             setComments(response.data.comments);
             // setPage(page => page + 1);
         } catch (error) {
-
+            setIsFetching(false);
         }
     }
 
@@ -46,16 +49,19 @@ const Comments = ({drop_id}: Comments) => {
 
     const reply = async () => {
         try {
+            setIsFetching(true);
             const response = await post('/comment/reply', {
                 reply: input,
-                _id: _id,
+                // _id: _id,
                 drop_id: drop_id
             });
-            toast.success(response.message);
+            setIsFetching(false);
+            toast.success('reply add');
             setInput('');
             action();
-        } catch (error) {
-
+        } catch (error: any) {
+            setIsFetching(false);
+            toast.error(error.message);
         }
     }
 
@@ -66,25 +72,31 @@ const Comments = ({drop_id}: Comments) => {
 
     const editReply = async () => {
         try {
+            setIsFetching(true);
             const response = await put(`/comment/edit`, {
                 reply_id: reply_id,
                 reply: input
             });
+            setIsFetching(false);
             toast.success(response.message);
             setReply_id('');
             setInput('');
             action();
         } catch (error: any) {
+            setIsFetching(false);
             toast.error(error.message);
         }
     }
 
     const removeReply = async (comment_id: string) => {
         try {
+            setIsFetching(true);
             const response = await remove(`/comment/remove/${comment_id}`);
+            setIsFetching(false);
             toast.success(response.message);
             action();
         } catch (error: any) {
+            setIsFetching(false);
             toast.error(error.message);
         }
     }
@@ -116,7 +128,8 @@ const Comments = ({drop_id}: Comments) => {
                                                             onClick={() => edit(comment._id, comment.reply)}>
                                                         <img className={'w-3 h-3'} src={editIcon} alt={''}/>
                                                     </button>
-                                                <button className={'w-fit'} onClick={() => removeReply(comment._id)}>
+                                                <button className={'w-fit'} onClick={() => removeReply(comment._id)}
+                                                        disabled={isFetching}>
                                                     <img className={'w-3 h-3'} src={removeIcon} alt={''}/>
                                                 </button>
                                                 </span>
@@ -133,7 +146,7 @@ const Comments = ({drop_id}: Comments) => {
                         <input className={'pr-3 w-full bg-transparent outline-0'} placeholder={'reply...'} value={input}
                                onChange={(e) => setInput(e.target.value)}/>
                         <button className={`absolute w-6 h-6 ${input ? 'right-3' : '-right-9'} transition-all`}
-                                onClick={() => reply_id ? editReply() : reply()}>
+                                onClick={() => reply_id ? editReply() : reply()} disabled={isFetching}>
                             <img className={'w-full'} src={send}/>
                         </button>
                     </div>

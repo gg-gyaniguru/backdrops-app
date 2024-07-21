@@ -17,6 +17,7 @@ type Response = {
 
 const Account = ({from}: Account) => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const [input, setInput] = useState({
         username: '',
         email: '',
@@ -37,18 +38,26 @@ const Account = ({from}: Account) => {
 
     const signUp = async () => {
         try {
+            setIsFetching(true);
             const response: Response = await post('/user/signup', input);
+            setIsFetching(false);
+            toast.success('account create');
             action(response);
         } catch (error: any) {
+            setIsFetching(false);
             toast.error(error.message);
         }
     }
 
     const signIn = async () => {
         try {
+            setIsFetching(true);
             const response: Response = await post('/user/signin', input);
+            setIsFetching(false);
             action(response);
+            toast.success('continue account');
         } catch (error: any) {
+            setIsFetching(false);
             toast.error(error.message);
         }
     }
@@ -95,9 +104,11 @@ const Account = ({from}: Account) => {
                             </div>
                             <div className={'mt-3'}>
                                 <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'}
-                                        onClick={() => from === 'signup' ? signUp() : signIn()}>
-                                    {from === 'signup' && 'Create'}
-                                    {from === 'signin' && 'Continue'}
+                                        onClick={() => from === 'signup' ? signUp() : signIn()} disabled={isFetching}>
+                                    {from === 'signup' && (isFetching ?
+                                        <div className={'m-auto dots-3'}></div> : 'Create')}
+                                    {from === 'signin' && (!isFetching ?
+                                        <div className={'m-auto dots-3'}></div> : 'Continue')}
                                 </button>
                             </div>
                             <div>

@@ -12,6 +12,7 @@ type Upload = {
 
 const Upload = ({refresh}: Upload) => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const imageRef = useRef(null);
     const [image, setImage] = useState(null);
     const [src, setSrc] = useState<any>(null);
@@ -32,15 +33,18 @@ const Upload = ({refresh}: Upload) => {
                 const file = new FormData()
                 file.append('_id', `${_id}`);
                 file.append('image', src);
+                setIsFetching(true);
                 const response = await axios.post(`/user/upload`, file, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${accessToken}`,
                     }
                 });
+                setIsFetching(false);
                 toast.success(response.data.message);
                 refresh();
             } catch (e: any) {
+                setIsFetching(false);
                 throw new Error(e.response.data.message)
             }
         } else {
@@ -87,7 +91,7 @@ const Upload = ({refresh}: Upload) => {
     return (
         <>
             <Modal className={'p-2 rounded-full bg-gray-900'} modalTitle={'change profile'} icon={edit}
-                   action={uploadImage} btn={'Upload'} btnVisible={true}>
+                   action={uploadImage} isFetching={isFetching} btn={'Upload'} btnVisible={true}>
                 <div className={'max-h-[30rem] w-full flex flex-col items-center gap-6 overflow-auto'}>
                     <input
                         className={'file:mr-3 file:px-3 text-sm file:text-base self-start file:py-1.5 file:text-white  file:rounded-full file:bg-indigo-600 file:border-0 cursor-pointer'}

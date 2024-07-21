@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {toast} from "sonner";
 import axios from '../utils/axios.ts';
 import {getKey} from "../utils/local.ts";
@@ -7,6 +7,7 @@ import Carousel from "./Carousel.tsx";
 
 const CreateDrop = () => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const [image, setImage] = useState<any>([]);
     const [preview, setPreview] = useState<any>([]);
     const [input, setInput] = useState('');
@@ -31,18 +32,21 @@ const CreateDrop = () => {
             image?.forEach((src: any) => {
                 file.append('image', src);
             });
+            setIsFetching(true);
             const response = await axios.post(`/drop/create`, file, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${accessToken}`,
                 }
             });
+            setIsFetching(false);
             toast.success(response.data.message);
             setImage([]);
             setPreview([]);
             setInput('');
             navigate('/');
         } catch (error: any) {
+            setIsFetching(false);
             toast.error(error.response.data.message);
         }
     }
@@ -78,8 +82,10 @@ const CreateDrop = () => {
                         placeholder={'Say something...!'}
                         value={input} onChange={(e) => setInput(e.target.value)}/>
                 </div>
-                <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'} onClick={createPost}>
-                    Create Drop
+                <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'} onClick={createPost}
+                        disabled={isFetching}>
+                    {isFetching ?
+                        <div className={'m-auto dots-3'}></div> : 'Create Drop'}
                 </button>
             </div>
         </>

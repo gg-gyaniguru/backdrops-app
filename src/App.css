@@ -61,7 +61,8 @@
 }
 
 .dots-3 {
-    width: 36px;
+    width: 30px;
+    height: 24px;
     aspect-ratio: 2;
     --_g: no-repeat radial-gradient(circle closest-side, #ffffff 90%, #0000);
     background: var(--_g) 0 50%,

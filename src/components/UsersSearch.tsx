@@ -6,6 +6,7 @@ import {Container, UserProfile} from "./index.tsx";
 
 const UsersSearch = () => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const [input, setInput] = useState('');
     const [users, setUsers] = useState<user[]>([]);
 

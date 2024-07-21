@@ -6,6 +6,7 @@ import Drop from "./Drop.tsx";
 
 const DropsSearch = () => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const [input, setInput] = useState('');
     const [drops, setDrops] = useState<drop[]>([]);
 

@@ -20,6 +20,7 @@ type Drop = {
 
 const Drop = ({drop, action}: Drop) => {
 
+    const [isFetching, setIsFetching] = useState(false);
     // here fix re render
     const [image, setImage] = useState(0);
 
@@ -29,32 +30,37 @@ const Drop = ({drop, action}: Drop) => {
 
     const like = async () => {
         try {
+            setIsFetching(true);
             const response = await post('/drop/like', {
                 drop_id: drop._id
             })
+            setIsFetching(false);
             action()
             toast.success(response.message);
-        } catch (error) {
-
+        } catch (error: any) {
+            setIsFetching(false);
+            toast.error(error.message);
         }
     }
 
     const unlike = async () => {
         try {
+            setIsFetching(true);
             const response = await post('/drop/unlike', {
                 drop_id: drop._id
             })
+            setIsFetching(false);
             action()
             toast.success(response.message);
         } catch (error) {
-
+            setIsFetching(false);
         }
     }
 
     const downloadDrop = async () => {
         try {
             const png = `${drop.src[image]}.png`;
-            const response = await fetch(`http://localhost:9060/api/static/${png}`);
+            const response = await fetch(`https://backdrops-api.onrender.com/api/static/${png}`);
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -71,10 +77,13 @@ const Drop = ({drop, action}: Drop) => {
 
     const removeDrop = async (_id: string) => {
         try {
+            setIsFetching(true);
             const response = await remove(`/drop/remove/${drop._id}`);
+            setIsFetching(false);
             action()
             toast.success(response.message);
         } catch (error: any) {
+            setIsFetching(false);
             toast.error(error.message);
         }
     }
@@ -95,12 +104,7 @@ const Drop = ({drop, action}: Drop) => {
                     <div className={'flex items-center gap-6'}>
                         <div className={'flex items-center gap-3'}>
                             <button
-                                onClick={() => drop.isLike ? unlike() : like()}>
-                                {/*{
-                                    drop.isLike ?
-                                        <img className={'w-5 h-5'} src={likedIcon}/> :
-                                        <img className={'w-5 h-5'} src={likeIcon}/>
-                                }*/}
+                                onClick={() => drop.isLike ? unlike() : like()} disabled={isFetching}>
                                 <img className={'w-5 h-5'} src={drop.isLike ? likedIcon : likeIcon}/>
                             </button>
                             <Likes _id={drop._id} likes={drop.likes}/>
@@ -112,7 +116,7 @@ const Drop = ({drop, action}: Drop) => {
                         </div>
                     </div>
                     <div className={'self-end'}>
-                        <button className={''} onClick={() => user ? removeDrop(drop._id) : downloadDrop()}>
+                        <button className={''} onClick={() => user ? removeDrop(drop._id) : downloadDrop()} disabled={isFetching}>
                             <img
                                 className={'w-5 h-5'}
                                 src={user ? removeIcon : downloadIcon}

@@ -11,6 +11,7 @@ type Modal = {
     modalTitle: string,
     children?: ReactNode,
     action?: any,
+    isFetching?: boolean,
     btn?: string,
     btnVisible?: boolean,
     anyAction?: any,
@@ -26,6 +27,7 @@ const Modal = ({
                    modalTitle,
                    children,
                    action,
+                   isFetching,
                    btn = 'save',
                    btnVisible = false,
                    anyAction,
@@ -134,7 +136,7 @@ const Modal = ({
                                     btnVisible &&
                                     <div className={'flex justify-end gap-6'}>
                                         <button className={'px-3 py-1.5 rounded-lg bg-gray-800'}
-                                                onClick={setAction}>{btn}</button>
+                                                onClick={setAction} disabled={isFetching}>{btn}</button>
                                         <button className={'px-3 py-1.5 rounded-lg bg-gray-950'}
                                                 onClick={active}>Cancel
                                         </button>

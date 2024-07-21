@@ -22,6 +22,7 @@ type user = {
 
 const User = () => {
 
+    const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState<user | null>(null);
     const [drops, setDrops] = useState<drop[]>([])
 
@@ -35,56 +36,55 @@ const User = () => {
         if (params.username?.startsWith('@')) {
             try {
                 const username = params.username?.substring(1);
+                setIsFetching(true);
                 const response = await get(`/user/get/${username}`);
+                setIsFetching(false);
                 setUser(response.data as user);
                 try {
+                    setIsFetching(true);
                     const response = await get(`/drop/get/${username}`);
+                    setIsFetching(false);
                     setDrops(response.data as drop[]);
                 } catch (error: any) {
+                    setIsFetching(false);
                     console.error(error.message);
+
                 }
             } catch (error: any) {
+                setIsFetching(false);
                 console.error(error.message);
             }
         }
     }
 
-    /*const getDrops = async () => {
-        try {
-            if (params.username?.startsWith('@')) {
-                const username = params.username?.substring(1);
-                const response = await get(`drop/get/${username}`);
-                setDrops(response.data as drop[]);
-            }
-        } catch (error: any) {
-
-        }
-    }*/
-
-    // const follower = useMemo(() => user?.followers.filter((follower: string) => follower === _id).length === 1, [user]);
-
     const follow = async () => {
         try {
+            setIsFetching(true);
             const response = await post('user/follow', {
                 _id: _id,
                 following_id: user?._id
             });
+            setIsFetching(false);
             getUser();
             toast.success('follow');
         } catch (error: any) {
+            setIsFetching(false);
 
         }
     }
 
     const unfollow = async () => {
         try {
+            setIsFetching(true);
             const response = await post('user/unfollow', {
                 _id: _id,
                 following_id: user?._id
             });
+            setIsFetching(false);
             getUser();
             toast.success('unfollow');
         } catch (error: any) {
+            setIsFetching(false);
 
         }
     }
