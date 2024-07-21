@@ -107,7 +107,7 @@ const Account = ({from}: Account) => {
                                         onClick={() => from === 'signup' ? signUp() : signIn()} disabled={isFetching}>
                                     {from === 'signup' && (isFetching ?
                                         <div className={'m-auto dots-3'}></div> : 'Create')}
-                                    {from === 'signin' && (!isFetching ?
+                                    {from === 'signin' && (isFetching ?
                                         <div className={'m-auto dots-3'}></div> : 'Continue')}
                                 </button>
                             </div>
