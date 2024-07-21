@@ -29,7 +29,7 @@ const Drop = ({drop, action}: Drop) => {
 
     const like = async () => {
         try {
-            const response = await post('drop/like', {
+            const response = await post('/drop/like', {
                 drop_id: drop._id
             })
             action()
@@ -41,7 +41,7 @@ const Drop = ({drop, action}: Drop) => {
 
     const unlike = async () => {
         try {
-            const response = await post('drop/unlike', {
+            const response = await post('/drop/unlike', {
                 drop_id: drop._id
             })
             action()
@@ -54,7 +54,7 @@ const Drop = ({drop, action}: Drop) => {
     const downloadDrop = async () => {
         try {
             const png = `${drop.src[image]}.png`;
-            const response = await fetch(`/api/static/${png}`);
+            const response = await fetch(`http://localhost:9060/api/static/${png}`);
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -71,7 +71,7 @@ const Drop = ({drop, action}: Drop) => {
 
     const removeDrop = async (_id: string) => {
         try {
-            const response = await remove(`drop/remove/${drop._id}`);
+            const response = await remove(`/drop/remove/${drop._id}`);
             action()
             toast.success(response.message);
         } catch (error: any) {

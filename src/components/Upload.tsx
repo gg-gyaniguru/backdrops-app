@@ -3,7 +3,7 @@ import {getKey} from "../utils/local.ts";
 import {toast} from "sonner";
 import edit from '../assets/edit.png'
 import Cropper from "react-easy-crop";
-import axios from "axios";
+import axios from '../utils/axios.ts';
 import Modal from "./Modal.tsx";
 
 type Upload = {
@@ -32,7 +32,7 @@ const Upload = ({refresh}: Upload) => {
                 const file = new FormData()
                 file.append('_id', `${_id}`);
                 file.append('image', src);
-                const response = await axios.post(`/api/user/upload`, file, {
+                const response = await axios.post(`/user/upload`, file, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${accessToken}`,

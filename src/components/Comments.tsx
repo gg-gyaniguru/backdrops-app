@@ -29,7 +29,7 @@ const Comments = ({drop_id}: Comments) => {
 
     const action = async () => {
         try {
-            const response = await get(`drop/comments/${drop_id}??page=${page}`);
+            const response = await get(`/drop/comments/${drop_id}??page=${page}`);
             setComments(response.data.comments);
             // setPage(page => page + 1);
         } catch (error) {
@@ -46,7 +46,7 @@ const Comments = ({drop_id}: Comments) => {
 
     const reply = async () => {
         try {
-            const response = await post('comment/reply', {
+            const response = await post('/comment/reply', {
                 reply: input,
                 _id: _id,
                 drop_id: drop_id
@@ -66,7 +66,7 @@ const Comments = ({drop_id}: Comments) => {
 
     const editReply = async () => {
         try {
-            const response = await put(`comment/edit`, {
+            const response = await put(`/comment/edit`, {
                 reply_id: reply_id,
                 reply: input
             });
@@ -81,7 +81,7 @@ const Comments = ({drop_id}: Comments) => {
 
     const removeReply = async (comment_id: string) => {
         try {
-            const response = await remove(`comment/remove/${comment_id}`);
+            const response = await remove(`/comment/remove/${comment_id}`);
             toast.success(response.message);
             action();
         } catch (error: any) {

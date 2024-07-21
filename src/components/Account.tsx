@@ -37,9 +37,8 @@ const Account = ({from}: Account) => {
 
     const signUp = async () => {
         try {
-            const response: Response = await post('user/signup', input);
+            const response: Response = await post('/user/signup', input);
             action(response);
-            console.log(response);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -47,7 +46,7 @@ const Account = ({from}: Account) => {
 
     const signIn = async () => {
         try {
-            const response: Response = await post('user/signin', input);
+            const response: Response = await post('/user/signin', input);
             action(response);
         } catch (error: any) {
             toast.error(error.message);

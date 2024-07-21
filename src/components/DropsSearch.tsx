@@ -11,7 +11,7 @@ const DropsSearch = () => {
 
     const search = async () => {
         try {
-            const response = await get(`drop/search/${input}`);
+            const response = await get(`/drop/search/${input}`);
             setDrops(response.data);
         } catch (error) {
 

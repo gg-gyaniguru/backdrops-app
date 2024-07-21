@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {toast} from "sonner";
-import axios from "axios";
+import axios from '../utils/axios.ts';
 import {getKey} from "../utils/local.ts";
 import {useNavigate} from "react-router-dom";
 import Carousel from "./Carousel.tsx";
@@ -31,7 +31,7 @@ const CreateDrop = () => {
             image?.forEach((src: any) => {
                 file.append('image', src);
             });
-            const response = await axios.post(`/api/drop/create`, file, {
+            const response = await axios.post(`/drop/create`, file, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${accessToken}`,

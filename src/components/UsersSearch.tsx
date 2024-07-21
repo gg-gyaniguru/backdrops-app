@@ -11,7 +11,7 @@ const UsersSearch = () => {
 
     const search = async () => {
         try {
-            const response = await get(`user/search/${input}`);
+            const response = await get(`/user/search/${input}`);
             setUsers(response.data);
         } catch (error) {
 

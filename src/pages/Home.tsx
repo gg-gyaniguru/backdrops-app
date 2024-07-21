@@ -9,7 +9,7 @@ const Home = () => {
 
     const getDrops = async () => {
         try {
-            const response = await get('drop/get');
+            const response = await get('/drop/get');
             setDrops(response.data as drop[]);
         } catch (error) {
 

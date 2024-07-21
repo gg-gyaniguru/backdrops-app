@@ -35,10 +35,10 @@ const User = () => {
         if (params.username?.startsWith('@')) {
             try {
                 const username = params.username?.substring(1);
-                const response = await get(`user/get/${username}`);
+                const response = await get(`/user/get/${username}`);
                 setUser(response.data as user);
                 try {
-                    const response = await get(`drop/get/${username}`);
+                    const response = await get(`/drop/get/${username}`);
                     setDrops(response.data as drop[]);
                 } catch (error: any) {
                     console.error(error.message);

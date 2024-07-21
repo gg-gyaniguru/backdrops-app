@@ -11,7 +11,7 @@ const Likes = () => {
 
     const getDrops = async () => {
         try {
-            const response = await get(`user/likes?page=${page}`);
+            const response = await get(`/user/likes?page=${page}`);
             setDrops(response.data.drops);
             // setPage(page => page + 1);
         } catch (error) {

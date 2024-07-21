@@ -21,7 +21,7 @@ const FooterNavbar = () => {
     const getUsername = async () => {
         if (_id) {
             try {
-                const response = await get(`user/get`);
+                const response = await get(`/user/get`);
                 setUsername(response.data.username);
             } catch (error) {
                 navigate(`/signin`);
@@ -30,7 +30,6 @@ const FooterNavbar = () => {
             navigate(`/signin`);
         }
     }
-
 
     useEffect(() => {
         getUsername();

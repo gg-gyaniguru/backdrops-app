@@ -13,16 +13,16 @@ type Likes = {
 const Likes = ({_id, likes}: Likes) => {
 
     const [users, setUsers] = useState<user[]>([]);
-    const [allUsers, setAllUsers] = useState(0);
     const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
 
     const action = async () => {
         try {
-            const response = await get(`drop/likes/${_id}?page=${page}`);
+            const response = await get(`/drop/likes/${_id}?page=${page}`);
             const data = response.data.likes;
             setUsers(users => [...users, ...data]);
-            setAllUsers(response.data.allUsers);
             setPage(page => page + 1);
+            setTotalPage(Math.ceil((response?.data?.allUsers) / 10));
         } catch (error) {
 
         }
@@ -31,14 +31,14 @@ const Likes = ({_id, likes}: Likes) => {
     const setAction = () => {
         setUsers([]);
         setPage(1);
-        setAllUsers(0);
+        setTotalPage(1);
     }
 
     return (
         <>
             <Modal className={''} title={shortener(likes)} modalTitle={'likes'} effect={'bottom'} anyAction={action}
                    setAnyAction={setAction} auto={true}>
-                <Users users={users} allUsers={allUsers} fetch={action}/>
+                <Users users={users} page={page} totalPage={totalPage} fetch={action}/>
             </Modal>
         </>
     );

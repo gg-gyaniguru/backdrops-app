@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from './axios.ts';
 import {getKey} from "./local.ts";
 
 const accessToken = getKey('accessToken');
 
 const post = async (url: string, data: any) => {
     try {
-        const response = await axios.post(`/api/${url}`, data, {
+        const response = await axios.post(`${url}`, data, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             }
@@ -18,7 +18,7 @@ const post = async (url: string, data: any) => {
 
 const put = async (url: string, data: any) => {
     try {
-        const response = await axios.put(`/api/${url}`, data, {
+        const response = await axios.put(`${url}`, data, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             }
@@ -31,7 +31,7 @@ const put = async (url: string, data: any) => {
 
 const get = async (url: string) => {
     try {
-        const response = await axios.get(`/api/${url}`, {
+        const response = await axios.get(`${url}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             }
@@ -44,7 +44,7 @@ const get = async (url: string) => {
 
 const remove = async (url: string) => {
     try {
-        const response = await axios.delete(`/api/${url}`, {
+        const response = await axios.delete(`${url}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             }
@@ -56,7 +56,7 @@ const remove = async (url: string) => {
 }
 
 const getSrc = (url: string) => {
-    return `/api/static/${url}.png`;
+    return `https://backdrops-api.onrender.com/api/static/${url}.png`;
 }
 
 export {post, put, get, remove, getSrc}
