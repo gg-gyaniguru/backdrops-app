@@ -1,6 +1,6 @@
 import {user} from "../types/drop.ts";
 import UserProfile from "./UserProfile.tsx";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 
 type Users = {
     isFetching: boolean,
@@ -35,8 +35,8 @@ const Users = ({isFetching, users, fetch, page, totalPage}: Users) => {
         <>
             <div className={'h-[20rem] flex flex-col gap-5 overflow-auto rounded-xl'} ref={div}>
                 {
-                    users.map((user, key) =>
-                        <UserProfile src={user.src} username={user.username} verified={user.verified} key={key}/>
+                    users.map(user =>
+                        <UserProfile src={user.src} username={user.username} verified={user.verified} key={user._id}/>
                     )
                 }
                 {
