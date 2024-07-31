@@ -151,8 +151,13 @@ const User = () => {
                         }
                     </div>
                 </Container> :
-                <Container className={'h-dvh flex items-center justify-center text-xl opacity-50'}>
-                    {!isFetching && 'user not found'}
+                <Container className={'h-dvh flex items-center justify-center text-xl'}>
+                    {
+                        isFetching ?
+                        <div className={'py-1.5 flex justify-center'}>
+                            <div className={'dots-3'}></div>
+                        </div>: <div>user not found</div>
+                    }
                 </Container>
             }
         </>
