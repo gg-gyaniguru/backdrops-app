@@ -1,11 +1,12 @@
 import Container from "./Container.tsx";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {post} from "../utils/fetch.ts";
 import {toast} from "sonner";
 import {setKey} from "../utils/local.ts";
 import Modal from "./Modal.tsx";
 import random from "../utils/random.ts";
+import {lower, trim} from "../utils/input.ts";
 
 type Account = {
     from: string
@@ -20,6 +21,7 @@ type Response = {
 const Account = ({from}: Account) => {
 
     const [isFetching, setIsFetching] = useState(false);
+    const [sendingOtp, setSendingOtp] = useState(false);
     const [input, setInput] = useState({
         username: '',
         email: '',
@@ -44,27 +46,35 @@ const Account = ({from}: Account) => {
         try {
             const otp = random(6);
             setOtp(otp);
-            setIsFetching(true);
-            const response = await post('user/otp', {email: input.email, otp});
-            setIsFetching(false);
+            setSendingOtp(true);
+            const response = await post('user/otp', {email: lower(input.email), otp: otp});
+            setSendingOtp(false);
             toast.success('otp send');
         } catch (error: any) {
-            setIsFetching(false);
+            setSendingOtp(false);
             toast.error(error.message);
         }
     }
 
     const signUp = async () => {
-        if (otp === inputOtp) {
-            try {
-                setIsFetching(true);
-                const response: Response = await post('/user/signup', input);
-                setIsFetching(false);
-                toast.success('account create');
-                action(response);
-            } catch (error: any) {
-                setIsFetching(false);
-                throw new Error(error.message);
+        if (otp) {
+            if (otp === inputOtp) {
+                try {
+                    setIsFetching(true);
+                    const response: Response = await post('/user/signup', {
+                        username: lower(input.username),
+                        email: lower(input.email),
+                        password: trim(input.password)
+                    });
+                    setIsFetching(false);
+                    toast.success('account create');
+                    action(response);
+                } catch (error: any) {
+                    setIsFetching(false);
+                    throw new Error(error.message);
+                }
+            } else {
+                throw new Error('incorrect otp');
             }
         } else {
             throw new Error('incorrect otp');
@@ -74,7 +84,10 @@ const Account = ({from}: Account) => {
     const signIn = async () => {
         try {
             setIsFetching(true);
-            const response: Response = await post('/user/signin', input);
+            const response: Response = await post('/user/signin', {
+                email: lower(input.email),
+                password: trim(input.password)
+            });
             setIsFetching(false);
             action(response);
             toast.success('continue account');
@@ -83,6 +96,15 @@ const Account = ({from}: Account) => {
             toast.error(error.message);
         }
     }
+
+    useEffect(() => {
+        const timeOut = setTimeout(() => {
+            setOtp('');
+        }, 300000)
+        return () => {
+            clearTimeout(timeOut);
+        }
+    }, [otp]);
 
     return (
         <>
@@ -135,8 +157,9 @@ const Account = ({from}: Account) => {
                                        isFetching={isFetching} action={signUp}>
                                     <div className={'w-full flex flex-col gap-3'}>
                                         <div className={''}>
-                                            <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'} onClick={sendOtp}>
-                                                {isFetching ? <div className={'m-auto dots-3'}></div> : 'Send OTP'}
+                                            <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'}
+                                                    onClick={sendOtp} disabled={isFetching || sendingOtp}>
+                                                {sendingOtp ? <div className={'m-auto dots-3'}></div> : 'Send OTP'}
                                             </button>
                                         </div>
                                         <div className={'w-full flex flex-col gap-3'}>
@@ -151,7 +174,7 @@ const Account = ({from}: Account) => {
                             </div>}
                             {from === 'signin' && <div className={'mt-3'}>
                                 <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'}
-                                        onClick={() => signIn()} disabled={isFetching}>
+                                        onClick={signIn} disabled={isFetching}>
                                     {isFetching ? <div className={'m-auto dots-3'}></div> : 'Continue'}
                                 </button>
                             </div>}
