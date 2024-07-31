@@ -70,7 +70,7 @@ const CreateDrop = () => {
                 <span className={'px-3'}>{`What's on your mind ?`}</span>
                 <input
                     className={'file:mr-3 file:px-3 text-sm file:text-base file:py-1.5 file:text-white  file:rounded-full file:bg-indigo-600 file:border-0 cursor-pointer'}
-                    type={'file'} multiple={true} accept={'image/png, image/jpeg'} onChange={upload}/>
+                    type={'file'} accept={'image/png, image/jpeg'} onChange={upload}/>
                 <div className={'p-3  flex flex-col gap-3 bg-gray-800 rounded-xl'}>
                     {
                         preview.length > 0 &&

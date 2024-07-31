@@ -1,6 +1,6 @@
 import type {drop} from "../types/drop.ts";
 import UserProfile from "./UserProfile.tsx";
-import {getSrc, post, remove} from "../utils/fetch.ts";
+import {post, remove} from "../utils/fetch.ts";
 import {getKey} from "../utils/local.ts";
 import likeIcon from '../assets/like.png';
 import likedIcon from '../assets/liked.png';
@@ -95,7 +95,7 @@ const Drop = ({drop, action}: Drop) => {
                     <UserProfile src={drop.user.src} username={drop.user.username} verified={drop.user.verified}/>
                 </div>
                 <div className={'p-3 flex flex-col gap-3 rounded-xl bg-gray-800'}>
-                    <Carousel slides={drop.src.map(drop => getSrc(drop))} effect={'slide'} action={setImage}/>
+                    <Carousel slides={drop.src} effect={'slide'} action={setImage}/>
                     <div className={''}>
                         {drop.description}
                     </div>

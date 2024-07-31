@@ -55,8 +55,5 @@ const remove = async (url: string) => {
     }
 }
 
-const getSrc = (url: string) => {
-    return `https://backdrops-api.onrender.com/api/static/${url}.png`;
-}
 
-export {post, put, get, remove, getSrc}
+export {post, put, get, remove}

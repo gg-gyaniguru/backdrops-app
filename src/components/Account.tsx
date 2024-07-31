@@ -4,6 +4,8 @@ import {Link, useNavigate} from "react-router-dom";
 import {post} from "../utils/fetch.ts";
 import {toast} from "sonner";
 import {setKey} from "../utils/local.ts";
+import Modal from "./Modal.tsx";
+import random from "../utils/random.ts";
 
 type Account = {
     from: string
@@ -23,6 +25,8 @@ const Account = ({from}: Account) => {
         email: '',
         password: ''
     });
+    const [otp, setOtp] = useState('');
+    const [inputOtp, setInputOtp] = useState('');
 
     const navigate = useNavigate();
 
@@ -36,16 +40,34 @@ const Account = ({from}: Account) => {
         navigate(`/@${response.username}`);
     }
 
-    const signUp = async () => {
+    const sendOtp = async () => {
         try {
+            const otp = random(6);
+            setOtp(otp);
             setIsFetching(true);
-            const response: Response = await post('/user/signup', input);
+            const response = await post('user/otp', {email: input.email, otp});
             setIsFetching(false);
-            toast.success('account create');
-            action(response);
+            toast.success('otp send');
         } catch (error: any) {
             setIsFetching(false);
             toast.error(error.message);
+        }
+    }
+
+    const signUp = async () => {
+        if (otp === inputOtp) {
+            try {
+                setIsFetching(true);
+                const response: Response = await post('/user/signup', input);
+                setIsFetching(false);
+                toast.success('account create');
+                action(response);
+            } catch (error: any) {
+                setIsFetching(false);
+                throw new Error(error.message);
+            }
+        } else {
+            throw new Error('incorrect otp');
         }
     }
 
@@ -102,18 +124,40 @@ const Account = ({from}: Account) => {
                                         onChange={(e) => inputChange(e)}/>
                                 </div>
                             </div>
-                            <div className={'mt-3'}>
-                                <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'}
+                            {from === 'signup' && <div className={'mt-3'}>
+                                {/*<button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'}
                                         onClick={() => from === 'signup' ? signUp() : signIn()} disabled={isFetching}>
-                                    {from === 'signup' && (isFetching ?
-                                        <div className={'m-auto dots-3'}></div> : 'Create')}
-                                    {from === 'signin' && (isFetching ?
-                                        <div className={'m-auto dots-3'}></div> : 'Continue')}
+                                    {isFetching ?
+                                        <div className={'m-auto dots-3'}></div> : 'Send Otp'}
+                                </button>*/}
+                                <Modal className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'} title={'Create'}
+                                       modalTitle={'verification'} btn={'Verify'} btnVisible={true}
+                                       isFetching={isFetching} action={signUp}>
+                                    <div className={'w-full flex flex-col gap-3'}>
+                                        <div className={''}>
+                                            <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'} onClick={sendOtp}>
+                                                {isFetching ? <div className={'m-auto dots-3'}></div> : 'Send OTP'}
+                                            </button>
+                                        </div>
+                                        <div className={'w-full flex flex-col gap-3'}>
+                                            <span className={'px-3 opacity-[.69]'}>Enter 6 Digits OTP</span>
+                                            <input
+                                                className={'px-3 py-1.5 bg-gray-800 outline-0 rounded-xl'}
+                                                autoComplete={"off"} value={inputOtp}
+                                                onChange={(e) => setInputOtp(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                </Modal>
+                            </div>}
+                            {from === 'signin' && <div className={'mt-3'}>
+                                <button className={'w-full px-3 py-1.5 bg-blue-600 rounded-xl'}
+                                        onClick={() => signIn()} disabled={isFetching}>
+                                    {isFetching ? <div className={'m-auto dots-3'}></div> : 'Continue'}
                                 </button>
-                            </div>
+                            </div>}
                             <div>
                                 {from === 'signup' && <Link to={'/signin'}>I have an account</Link>}
-                                {from === 'signin' && <Link to={'/signup'}>{`I don't have an account`}</Link>}
+                                {from === 'signin' && <Link to={'/signup'}>I don't have an account</Link>}
                             </div>
                         </form>
                     </div>

@@ -136,7 +136,9 @@ const Modal = ({
                                     btnVisible &&
                                     <div className={'flex justify-end gap-6'}>
                                         <button className={'px-3 py-1.5 rounded-lg bg-gray-800'}
-                                                onClick={setAction} disabled={isFetching}>{btn}</button>
+                                                onClick={setAction} disabled={isFetching}>
+                                            {isFetching ? <div className={'m-auto dots-3'}></div> : btn}
+                                        </button>
                                         <button className={'px-3 py-1.5 rounded-lg bg-gray-950'}
                                                 onClick={active}>Cancel
                                         </button>
