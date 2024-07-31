@@ -140,6 +140,12 @@ const Comments = ({drop_id}: Comments) => {
                                 </div>
                             )
                         }
+                        {
+                            isFetching &&
+                            <div className={'py-1.5 flex justify-center'}>
+                                <div className={'dots-3'}></div>
+                            </div>
+                        }
                     </div>
                     <div
                         className={'px-3 py-1.5 flex absolute left-0 bottom-0 right-0 bg-gray-800 rounded-xl overflow-hidden'}>
