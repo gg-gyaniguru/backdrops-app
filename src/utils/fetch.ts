@@ -55,5 +55,8 @@ const remove = async (url: string) => {
     }
 }
 
+const getSrc = (src: string) => {
+    return `https://res.cloudinary.com/backdrops-storage/image/upload/v${src}.png`;
+}
 
-export {post, put, get, remove}
+export {post, put, get, remove, getSrc}

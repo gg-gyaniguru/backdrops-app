@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {user} from "../types/drop.ts";
 import {get} from "../utils/fetch.ts";
-import {Container, UserProfile} from "./index.tsx";
+import {UserProfile} from "./index.tsx";
 
 
 const UsersSearch = () => {
@@ -12,10 +12,12 @@ const UsersSearch = () => {
 
     const search = async () => {
         try {
+            setIsFetching(true);
             const response = await get(`/user/search/${input}`);
+            setIsFetching(false);
             setUsers(response.data);
         } catch (error) {
-
+            setIsFetching(false);
         }
     }
 
@@ -28,26 +30,32 @@ const UsersSearch = () => {
     }, [input]);
 
     return (
-       <>
+        <>
 
-           {/*<Container className={'my-20'}>*/}
-               <div className={'mt-6 px-3 py-1.5 flex bg-gray-800 rounded-xl'}>
-                   <span>@</span><input className={'w-full bg-transparent outline-0'} placeholder={'username'}
-                                        value={input} autoFocus={true}
-                                        onChange={(e) => setInput(e.target.value)}/>
-               </div>
+            {/*<Container className={'my-20'}>*/}
+            <div className={'mt-6 px-3 py-1.5 flex bg-gray-800 rounded-xl'}>
+                <span>@</span><input className={'w-full bg-transparent outline-0'} placeholder={'username'}
+                                     value={input} autoFocus={true}
+                                     onChange={(e) => setInput(e.target.value)}/>
+            </div>
 
-               <div className={'mt-6 flex flex-col gap-6'}>
-                   {
-                       users.map(user =>
-                           <UserProfile src={user.src} username={user.username} verified={user.verified}
-                                        key={user._id}/>
-                       )
-                   }
-               </div>
-           {/*</Container>*/}
+            <div className={'mt-6 flex flex-col gap-6'}>
+                {
+                    users.map(user =>
+                        <UserProfile src={user.src} username={user.username} verified={user.verified}
+                                     key={user._id}/>
+                    )
+                }
+                {
+                    isFetching &&
+                    <div className={'py-1.5 flex justify-center'}>
+                        <div className={'dots-3'}></div>
+                    </div>
+                }
+            </div>
+            {/*</Container>*/}
 
-       </>
+        </>
     );
 };
 

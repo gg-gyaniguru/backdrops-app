@@ -1,4 +1,4 @@
-const random = (digits: number) => {
+const random = (digits: number):string => {
     let random = '';
     do {
         let key = Math.floor(Math.random() * 123)

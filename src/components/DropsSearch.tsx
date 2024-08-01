@@ -12,10 +12,12 @@ const DropsSearch = () => {
 
     const search = async () => {
         try {
+            setIsFetching(true);
             const response = await get(`/drop/search/${input}`);
+            setIsFetching(false);
             setDrops(response.data);
         } catch (error) {
-
+            setIsFetching(false);
         }
     }
 
@@ -42,6 +44,12 @@ const DropsSearch = () => {
                     drops.map(drop =>
                         <Drop drop={drop} action={search} key={drop._id}/>
                     )
+                }
+                {
+                    isFetching &&
+                    <div className={'py-1.5 flex justify-center'}>
+                        <div className={'dots-3'}></div>
+                    </div>
                 }
             </div>
 
