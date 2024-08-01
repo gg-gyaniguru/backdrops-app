@@ -9,8 +9,6 @@ const Home = () => {
     const [drops, setDrops] = useState<drop[]>([]);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    console.log(drops)
-    // setUsers(users => [...users, ...data]);
 
     const getDrops = async () => {
         try {
