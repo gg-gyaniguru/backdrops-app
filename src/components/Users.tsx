@@ -18,7 +18,7 @@ const Users = ({isFetching, users, fetch, page, totalPage}: Users) => {
     const getScroll = async () => {
         if (page <= totalPage) {
             if (div?.current.scrollTop + div.current.clientHeight >= div.current.scrollHeight) {
-                await fetch();
+                fetch();
             }
         }
     }
@@ -29,7 +29,7 @@ const Users = ({isFetching, users, fetch, page, totalPage}: Users) => {
         return () => {
             current?.removeEventListener('scroll', getScroll);
         }
-    }, [isFetching, totalPage]);
+    }, [isFetching, page, totalPage]);
 
     return (
         <>

@@ -10,13 +10,13 @@ const Likes = () => {
     const [page, setPage] = useState(1);
 
     const getDrops = async () => {
-        try {
+        /*try {
             const response = await get(`/user/likes?page=${page}`);
             setDrops(response.data.drops);
             // setPage(page => page + 1);
         } catch (error) {
             setDrops([]);
-        }
+        }*/
     }
 
     useEffect(() => {

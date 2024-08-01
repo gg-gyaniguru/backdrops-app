@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useLocation, useParams} from "react-router-dom";
 import {get, post} from "../utils/fetch.ts";
 import {getKey} from "../utils/local.ts";
@@ -24,7 +24,9 @@ const User = () => {
 
     const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState<user | null>(null);
-    const [drops, setDrops] = useState<drop[]>([])
+    const [drops, setDrops] = useState<drop[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
 
     const params = useParams();
 
@@ -44,11 +46,13 @@ const User = () => {
                     setIsFetching(true);
                     const response = await get(`/drop/get/${username}`);
                     setIsFetching(false);
-                    setDrops(response.data as drop[]);
+                    const drop = response.data;
+                    setDrops(drops => [...drops, ...drop]);
+                    setTotalPage(Math.ceil((response?.data[0]?.allDrops) / 10));
+                    setPage(page => page + 1);
                 } catch (error: any) {
                     setIsFetching(false);
                     console.error(error.message);
-
                 }
             } catch (error: any) {
                 setIsFetching(false);
@@ -88,6 +92,21 @@ const User = () => {
 
         }
     }
+
+    const getScroll = () => {
+        if (page <= totalPage) {
+            if (Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.scrollHeight) {
+                getUser();
+            }
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', getScroll);
+        return () => {
+            window.removeEventListener('scroll', getScroll);
+        }
+    }, [isFetching, page, totalPage]);
 
     useEffect(() => {
         getUser();
@@ -146,17 +165,19 @@ const User = () => {
                             drops.length > 0 ?
                                 drops?.map((drop: drop) =>
                                     <Drop drop={drop} action={getUser} key={drop._id}/>
-                                ) :
+                                )
+                                :
                                 <span className={'opacity-60'}>not drop yet</span>
                         }
+                        {isFetching && <div className={'m-auto dots-3'}></div>}
                     </div>
                 </Container> :
                 <Container className={'h-dvh flex items-center justify-center text-xl'}>
                     {
                         isFetching ?
-                        <div className={'py-1.5 flex justify-center'}>
-                            <div className={'dots-3'}></div>
-                        </div>: <div>user not found</div>
+                            <div className={'py-1.5 flex justify-center'}>
+                                <div className={'dots-3'}></div>
+                            </div> : <div>user not found</div>
                     }
                 </Container>
             }

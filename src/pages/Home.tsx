@@ -6,21 +6,44 @@ import {get} from "../utils/fetch.ts";
 const Home = () => {
 
     const [isFetching, setIsFetching] = useState(false);
-    const [drops, setDrops] = useState<drop[]>([])
+    const [drops, setDrops] = useState<drop[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
+    console.log(drops)
+    // setUsers(users => [...users, ...data]);
 
     const getDrops = async () => {
         try {
             setIsFetching(true);
-            const response = await get('/drop/get');
+            const response = await get(`/drop/get?page=${page}`);
             setIsFetching(false);
-            setDrops(response.data as drop[]);
+            const drop = response.data;
+            setDrops(drops => [...drops, ...drop]);
+            setTotalPage(Math.ceil((response?.data[0]?.allDrops) / 10));
+            setPage(page => page + 1);
         } catch (error) {
             setIsFetching(false);
         }
     }
 
+    const getScroll = () => {
+        if (page <= totalPage) {
+            if (Math.ceil(window.innerHeight + document.documentElement.scrollTop)>= document.documentElement.scrollHeight) {
+                getDrops();
+            }
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('scroll', getScroll);
+        return () => {
+            window.removeEventListener('scroll', getScroll);
+        }
+    }, [isFetching, page, totalPage]);
+
     useEffect(() => {
         getDrops();
+        // getScroll();
     }, []);
 
     return (
