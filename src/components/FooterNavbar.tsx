@@ -38,7 +38,7 @@ const FooterNavbar = () => {
     return (
         <>
             <Container
-                className={'p-3 fixed left-0 bottom-0 right-0 z-[999999] bg-white/30 rounded-t-3xl backdrop-blur-sm'}>
+                className={'p-3 fixed left-0 bottom-0 right-0 z-[99999] bg-white/30 rounded-t-3xl backdrop-blur-sm'}>
                 <div className={'flex justify-center gap-9 sm:gap-12'}>
                     <Link to={'/'}>
                         <img className={'w-6 h-6'} src={home} alt={''}/>
