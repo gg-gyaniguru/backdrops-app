@@ -19,7 +19,7 @@ type Drop = {
 }
 
 const Drop = ({drop, action}: Drop) => {
-
+    console.log(drop)
     const [isFetching, setIsFetching] = useState(false);
     // here fix re render
     const [image, setImage] = useState(0);
@@ -59,13 +59,13 @@ const Drop = ({drop, action}: Drop) => {
 
     const downloadDrop = async () => {
         try {
-            const png = `${drop.src[image]}.png`;
-            const response = await fetch(`https://backdrops-api.onrender.com/api/static/${png}`);
+            // const png = get;
+            const response = await fetch(getSrc(`${drop.src[image]}`));
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `${png}`);
+            link.setAttribute('download', `${drop._id}`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

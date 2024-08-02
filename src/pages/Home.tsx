@@ -41,7 +41,6 @@ const Home = () => {
 
     useEffect(() => {
         getDrops();
-        // getScroll();
     }, []);
 
     return (
