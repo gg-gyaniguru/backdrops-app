@@ -35,8 +35,7 @@ const CreateDrop = () => {
             setIsFetching(true);
             const response = await axios.post(`/drop/create`, file, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
             setIsFetching(false);

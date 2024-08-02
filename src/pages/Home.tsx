@@ -26,7 +26,7 @@ const Home = () => {
 
     const getScroll = () => {
         if (page <= totalPage) {
-            if (Math.ceil(window.innerHeight + document.documentElement.scrollTop)>= document.documentElement.scrollHeight) {
+            if (Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.scrollHeight) {
                 getDrops();
             }
         }
