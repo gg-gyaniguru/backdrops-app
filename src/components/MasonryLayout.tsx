@@ -21,7 +21,7 @@ const MasonryLayout = ({children = []}: MasonryLayout) => {
             <div className={'w-full flex flex-nowrap gap-3'}>
                 {
                     getColumns().map((column: [], key: number) => (
-                        <div className={'w-full sm:w-1/2 lg:w-1/3 flex flex-col gap-3'} key={key}>
+                        <div className={'w-full w-1/2 flex flex-col gap-3'} key={key}>
                             {
                                 column.map((child, key: number) => (
                                     <div className={'w-full'} key={key}>
