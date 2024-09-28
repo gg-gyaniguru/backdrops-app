@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {post} from "../utils/fetch.ts";
 import {toast} from "sonner";
 
-const CreateCollection = ({action, p}: { action?: any, p?:boolean }) => {
+const CreateCollection = ({action, p=true}: { action?: any, p?:boolean }) => {
 
     const [isFetching, setIsFetching] = useState(false);
     const [input, setInput] = useState('');
