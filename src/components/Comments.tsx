@@ -104,7 +104,7 @@ const Comments = ({drop_id}: Comments) => {
     return (
         <>
             <Modal className={'w-5 h-5'} icon={commentIcon} modalTitle={'comments'} effect={'bottom'} anyAction={action}
-                   setAnyAction={setAction} auto={true}>
+                   setAnyAction={setAction} auto={true} large={'w-5 h-5'}>
                 <div className={'h-[20rem] relative'}>
                     <div className={'h-[16rem] relative flex flex-col gap-3 overflow-auto rounded-xl'}>
                         {

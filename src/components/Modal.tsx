@@ -16,7 +16,8 @@ type Modal = {
     btnVisible?: boolean,
     anyAction?: any,
     setAnyAction?: any,
-    auto?: boolean
+    auto?: boolean,
+    large?: string
 }
 
 const Modal = ({
@@ -32,7 +33,8 @@ const Modal = ({
                    btnVisible = false,
                    anyAction,
                    setAnyAction,
-                   auto = false
+                   auto = false,
+                   large = 'w-8 h-8',
                }: Modal) => {
 
     const [modal, setModal] = useState(false);
@@ -106,7 +108,7 @@ const Modal = ({
     return (
         <>
             <button className={`${className}`} onClick={active}>
-                {icon && <img className={'w-5 h-5'} src={icon} alt={''}/>}
+                {icon && <img className={`${large? large :'w-5 h-5'}`} src={icon} alt={''}/>}
                 {title && title}
             </button>
             {
@@ -114,11 +116,12 @@ const Modal = ({
                 <>
                     <div className={'w-dvw h-dvh fixed left-0 top-0 z-[999999]'}>
                         <div
-                            className={`w-dvw h-dvh flex items-center justify-center fixed left-0 ${toggle ? `${effect === 'top' ? 'top-0' : 'bottom-0'}` : `${effect === 'top' ? '-top-[100dvh]' : '-bottom-[100dvh]'}`} right-0 z-[99999] transition-all`}>
+                            className={`w-dvw h-dvh flex items-center justify-center fixed left-0 ${toggle ? `${effect === 'top' ? 'top-0' : 'bottom-0'}` : `${effect === 'top' ? '-top-[100dvh]' : '-bottom-[100dvh]'}`} right-0 z-[999999] transition-all`}>
                             <Container
-                                className={'p-6 flex flex-col gap-6 relative z-[999999] rounded-3xl bg-gray-900'}>
-                                <div className={'flex items-center justify-between'}>
-                                    <div className={'capitalize'}>{modalTitle}</div>
+                                className={`flex flex-col ${modalTitle === 'drop' ? 'p-3 gap-0' : 'p-6 gap-6'} relative z-[999999] rounded-3xl bg-gray-900`}>
+                                <div
+                                    className={`${modalTitle === 'drop' && 'px-3 pt-3 absolute top-3 right-3 z-10'} flex items-center justify-between`}>
+                                    {modalTitle !== 'drop' && <div className={'capitalize'}>{modalTitle}</div>}
                                     <div className={'w-6 flex flex-col items-end gap-[.35rem] cursor-pointer'}
                                          onClick={active}>
                                         <div
@@ -129,7 +132,7 @@ const Modal = ({
                                             className={`h-[.1rem] bg-white transition-all duration-300 w-full -translate-y-[.45rem] rotate-45 rounded-full`}></div>
                                     </div>
                                 </div>
-                                <div className={'relative'}>
+                                <div className={'relative max-h-[80dvh] overflow-auto rounded-xl'}>
                                     {children}
                                 </div>
                                 {

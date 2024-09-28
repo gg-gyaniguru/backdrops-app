@@ -1,12 +1,11 @@
 import type {drop} from "../types/drop.ts";
 import UserProfile from "./UserProfile.tsx";
-import {getSrc, post, remove} from "../utils/fetch.ts";
+import {post, remove} from "../utils/fetch.ts";
 import {getKey} from "../utils/local.ts";
 import likeIcon from '../assets/like.png';
 import likedIcon from '../assets/liked.png';
 import downloadIcon from '../assets/download.png';
 import removeIcon from '../assets/remove.png';
-import Carousel from "./Carousel.tsx";
 import {toast} from "sonner";
 import {useMemo, useState} from "react";
 import Likes from "./Likes.tsx";
@@ -19,10 +18,10 @@ type Drop = {
 }
 
 const Drop = ({drop, action}: Drop) => {
-    console.log(drop)
+
     const [isFetching, setIsFetching] = useState(false);
     // here fix re render
-    const [image, setImage] = useState(0);
+    // const [image, setImage] = useState(0);
 
     const _id = getKey('_id');
 
@@ -59,8 +58,7 @@ const Drop = ({drop, action}: Drop) => {
 
     const downloadDrop = async () => {
         try {
-            // const png = get;
-            const response = await fetch(getSrc(`${drop.src[image]}`));
+            const response = await fetch(drop.src);
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -90,12 +88,14 @@ const Drop = ({drop, action}: Drop) => {
 
     return (
         <>
-            <div className={'p-3 flex flex-col gap-3 rounded-3xl bg-gray-900'}>
+            <div className={'h-full p-3 flex flex-col gap-3 rounded-xl'}>
                 <div className={'w-fit px-3'}>
                     <UserProfile src={drop.user.src} username={drop.user.username} verified={drop.user.verified}/>
                 </div>
-                <div className={'p-3 flex flex-col gap-3 rounded-xl bg-gray-800'}>
-                    <Carousel slides={drop.src.map(src => getSrc(src))} effect={'slide'} action={setImage}/>
+                <div className={'h-full p-3 flex flex-col gap-3 rounded-xl bg-gray-800'}>
+                    <div className={'w-full rounded-md'}>
+                        <img className={'w-full rounded-md'} src={drop.src} alt={''}/>
+                    </div>
                     <div className={''}>
                         {drop.description}
                     </div>
@@ -103,9 +103,8 @@ const Drop = ({drop, action}: Drop) => {
                 <div className={'px-3 flex items-center justify-between'}>
                     <div className={'flex items-center gap-6'}>
                         <div className={'flex items-center gap-3'}>
-                            <button
-                                onClick={() => drop.isLike ? unlike() : like()} disabled={isFetching}>
-                                <img className={'w-5 h-5'} src={drop.isLike ? likedIcon : likeIcon}/>
+                            <button disabled={isFetching} onClick={() => drop.isLike ? unlike() : like()}>
+                                <img className={'w-5 h-5'} src={drop.isLike ? likedIcon : likeIcon} alt={''}/>
                             </button>
                             <Likes _id={drop._id} likes={drop.likes}/>
                         </div>
@@ -115,8 +114,8 @@ const Drop = ({drop, action}: Drop) => {
                             <button>{shortener(drop.comments)}</button>
                         </div>
                     </div>
-                    <div className={'self-end'}>
-                        <button className={''} onClick={() => user ? removeDrop(drop._id) : downloadDrop()}
+                    <div className={'flex items-center'}>
+                        <button className={'h-fit'} onClick={() => user ? removeDrop(drop._id) : downloadDrop()}
                                 disabled={isFetching}>
                             <img
                                 className={'w-5 h-5'}

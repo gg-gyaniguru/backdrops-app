@@ -13,12 +13,19 @@ type comment = {
 
 type drop = {
     _id: string,
-    src: string[],
+    src: string,
     description: string,
     user: user,
     likes: number,
-    isLike:boolean
+    isLike: boolean
     comments: number
 }
 
-export type {user, drop, comment}
+type collection = {
+    _id: string,
+    src: string | null,
+    name: string,
+    drops: drop[],
+}
+
+export type {user, drop, comment, collection}

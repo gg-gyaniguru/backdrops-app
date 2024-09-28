@@ -1,12 +1,12 @@
-import {Container, Drop} from "../components";
-import React, {useEffect, useState} from "react";
-import {drop} from "../types/drop.ts";
+import {Container, InfiniteScroll, Masonry} from "../components";
+import {useEffect, useState} from "react";
 import {get} from "../utils/fetch.ts";
+import GetDrops from "../components/GetDrops.tsx";
 
 const Home = () => {
 
     const [isFetching, setIsFetching] = useState(false);
-    const [drops, setDrops] = useState<drop[]>([]);
+    const [drops, setDrops] = useState<any>([]);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
@@ -16,28 +16,13 @@ const Home = () => {
             const response = await get(`/drop/get?page=${page}`);
             setIsFetching(false);
             const drop = response.data;
-            setDrops(drops => [...drops, ...drop]);
-            setTotalPage(Math.ceil((response?.data[0]?.allDrops) / 10));
             setPage(page => page + 1);
+            setTotalPage(Math.ceil((response?.allDrops) / 10));
+            setDrops((drops:any) => [...drops, ...drop]);
         } catch (error) {
             setIsFetching(false);
         }
     }
-
-    const getScroll = () => {
-        if (page <= totalPage) {
-            if (Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.scrollHeight) {
-                getDrops();
-            }
-        }
-    }
-
-    useEffect(() => {
-        window.addEventListener('scroll', getScroll);
-        return () => {
-            window.removeEventListener('scroll', getScroll);
-        }
-    }, [isFetching, page, totalPage]);
 
     useEffect(() => {
         getDrops();
@@ -48,13 +33,12 @@ const Home = () => {
             <Container className={'my-20'}>
                 <div className={''}>
                     <div>All Drops</div>
-                    <div className={'mt-6 flex flex-col gap-6'}>
-                        {
-                            drops.map(drop =>
-                                <Drop drop={drop} key={drop._id} action={getDrops}/>
-                            )
-                        }
-                        {isFetching && <div className={'m-auto dots-3'}></div>}
+                    <div className={'mt-6'}>
+                        <InfiniteScroll isFetching={isFetching} fetch={getDrops} page={page}
+                                        totalPage={totalPage}>
+                            {/*<Masonry drops={drops}/>*/}
+                            <GetDrops drops={drops}/>
+                        </InfiniteScroll>
                     </div>
                 </div>
             </Container>

@@ -15,7 +15,7 @@ const Users = ({isFetching, users, fetch, page, totalPage}: Users) => {
     // const [isFetching, setIsFetching] = useState(false);
     const div: any = useRef(null);
 
-    const getScroll = async () => {
+    const infiniteScroll = async () => {
         if (page <= totalPage) {
             if (div?.current.scrollTop + div.current.clientHeight >= div.current.scrollHeight) {
                 fetch();
@@ -25,15 +25,15 @@ const Users = ({isFetching, users, fetch, page, totalPage}: Users) => {
 
     useEffect(() => {
         const current = div?.current;
-        current?.addEventListener('scroll', getScroll);
+        current?.addEventListener('scroll', infiniteScroll);
         return () => {
-            current?.removeEventListener('scroll', getScroll);
+            current?.removeEventListener('scroll', infiniteScroll);
         }
     }, [isFetching, page, totalPage]);
 
     return (
         <>
-            <div className={'h-[20rem] flex flex-col gap-5 overflow-auto rounded-xl'} ref={div}>
+            <div className={'h-[20rem] flex flex-col gap-3 overflow-auto rounded-xl'} ref={div}>
                 {
                     users.map(user =>
                         <UserProfile src={user.src} username={user.username} verified={user.verified} key={user._id}/>

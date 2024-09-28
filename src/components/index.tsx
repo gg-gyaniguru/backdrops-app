@@ -10,8 +10,11 @@ import FooterNavbar from "./FooterNavbar.tsx";
 import UserProfile from "./UserProfile.tsx";
 import Upload from "./Upload.tsx";
 import CreateDrop from "./CreateDrop.tsx";
+import CreateCollection from "./CreateCollection.tsx";
 import Likes from "./Likes.tsx";
 import UsersSearch from "./UsersSearch.tsx";
 import DropsSearch from "./DropsSearch.tsx";
+import Masonry from "./Masonry.tsx";
+import InfiniteScroll from "./InfiniteScroll.tsx";
 
-export {Splash, Container, Account, Modal, Following, Drop, UserProfile, ProfileImage, Navbar, FooterNavbar, Upload, CreateDrop, Likes, UsersSearch, DropsSearch};
+export {Splash, Container, Account, Modal, Following, Drop, CreateCollection, UserProfile, ProfileImage, Navbar, FooterNavbar, Upload, CreateDrop, Likes, UsersSearch, DropsSearch, Masonry, InfiniteScroll};

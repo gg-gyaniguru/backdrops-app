@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {user} from "../types/drop.ts";
 import {get} from "../utils/fetch.ts";
 import {UserProfile} from "./index.tsx";
+import InfiniteScroll from "./InfiniteScroll.tsx";
 
 
 const UsersSearch = () => {
@@ -9,23 +10,29 @@ const UsersSearch = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [input, setInput] = useState('');
     const [users, setUsers] = useState<user[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
 
     const search = async () => {
         try {
             setIsFetching(true);
-            const response = await get(`/user/search/${input}`);
+            const response = await get(`/user/search/${input}?page=${page}`);
             setIsFetching(false);
-            setUsers(response.data);
+            const user = response.data;
+            setUsers(users => [...users, ...user]);
+            setPage(page => page + 1);
+            setTotalPage(Math.ceil((response.allDrops) / 10));
         } catch (error) {
             setIsFetching(false);
         }
     }
 
     useEffect(() => {
+        setPage(1);
         if (input.length >= 5) {
             search();
         } else {
-            setUsers([])
+            setUsers([]);
         }
     }, [input]);
 
@@ -39,19 +46,15 @@ const UsersSearch = () => {
                                      onChange={(e) => setInput(e.target.value)}/>
             </div>
 
-            <div className={'mt-6 flex flex-col gap-6'}>
-                {
-                    users.map(user =>
-                        <UserProfile src={user.src} username={user.username} verified={user.verified}
-                                     key={user._id}/>
-                    )
-                }
-                {
-                    isFetching &&
-                    <div className={'py-1.5 flex justify-center'}>
-                        <div className={'dots-3'}></div>
-                    </div>
-                }
+            <div className={'mt-6'}>
+                <InfiniteScroll style={'flex flex-col gap-3'} isFetching={isFetching} fetch={search} page={page} totalPage={totalPage}>
+                    {
+                        users.map(user =>
+                            <UserProfile src={user.src} username={user.username} verified={user.verified}
+                                         key={user._id}/>
+                        )
+                    }
+                </InfiniteScroll>
             </div>
             {/*</Container>*/}
 

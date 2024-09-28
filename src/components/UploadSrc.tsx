@@ -1,16 +1,15 @@
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getKey} from "../utils/local.ts";
 import {toast} from "sonner";
-import edit from '../assets/edit.png'
 import Cropper from "react-easy-crop";
 import axios from '../utils/axios.ts';
 import Modal from "./Modal.tsx";
 
 type Upload = {
-    refresh: any
+    img:any
 }
 
-const Upload = ({refresh}: Upload) => {
+const Upload = ({img}: Upload) => {
 
     const [isFetching, setIsFetching] = useState(false);
     const imageRef = useRef(null);
@@ -20,6 +19,7 @@ const Upload = ({refresh}: Upload) => {
     const [zoom, setZoom] = useState(1);
 
     const _id = getKey('_id');
+
 
     const upload = (e: any) => {
         setImage(URL.createObjectURL(e.target.files[0]) as any);
@@ -39,7 +39,6 @@ const Upload = ({refresh}: Upload) => {
                 });
                 setIsFetching(false);
                 toast.success(response.data.message);
-                refresh();
             } catch (e: any) {
                 setIsFetching(false);
                 throw new Error(e.response.data.message)
@@ -85,10 +84,16 @@ const Upload = ({refresh}: Upload) => {
         });
     };
 
+    // useEffect(() => {
+    //     if (image) {
+    //         img(image);
+    //     }
+    // }, [image]);
+
     return (
         <>
-            <Modal className={'p-2 rounded-full bg-gray-900'} modalTitle={'change profile'} icon={edit}
-                   action={uploadImage} isFetching={isFetching} btn={'Upload'} btnVisible={true} large={'w-5 h-5'}>
+            <Modal title={'upload'} className={'px-3 py-1.5 bg-blue-600 rounded-lg'} modalTitle={'thumbnail'}
+                   action={uploadImage} isFetching={isFetching} btn={'Upload'} btnVisible={true}>
                 <div className={'max-h-[30rem] w-full flex flex-col items-center gap-6 overflow-auto'}>
                     <input
                         className={'file:mr-3 file:px-3 text-sm file:text-base self-start file:py-1.5 file:text-white  file:rounded-full file:bg-indigo-600 file:border-0 cursor-pointer'}
@@ -97,7 +102,7 @@ const Upload = ({refresh}: Upload) => {
                     {
                         image &&
                         <Cropper image={image} onCropChange={setCrop} crop={crop} aspect={1} zoom={zoom}
-                                 onZoomChange={setZoom} cropShape={"round"} onCropComplete={onCropComplete}/>
+                                 onZoomChange={setZoom} onCropComplete={onCropComplete}/>
 
                     }
 

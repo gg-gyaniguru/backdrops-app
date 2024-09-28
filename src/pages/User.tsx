@@ -1,35 +1,48 @@
 import React, {useEffect, useState} from "react";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {get, post} from "../utils/fetch.ts";
 import {getKey} from "../utils/local.ts";
-import {Container, Drop, Following, ProfileImage, Upload} from "../components";
+import {Container, Following, InfiniteScroll, Masonry, ProfileImage, Upload} from "../components";
 import edit from '../assets/edit.png';
 import {toast} from "sonner";
 import verify from '../assets/verify.png';
-import {drop} from "../types/drop.ts";
+import {collection, drop} from "../types/drop.ts";
 import {shortener} from "../utils/logic.ts";
+import Collections from "../components/Collections.tsx";
+import CreateDropPopup from "../components/CreateDropModal.tsx";
+import CreateCollectionModal from "../components/CreateCollectionModal.tsx";
 
 type user = {
     _id: string;
     src: string | null,
     username: string,
     drops: number,
+    collections: number,
     following: number,
     followers: number,
     isFollowing: boolean
     verified: boolean
 }
 
+type category = 'drops' | 'collections';
+
 const User = () => {
 
     const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState<user | null>(null);
+    const [category, setCategory] = useState<category>('drops')
     const [drops, setDrops] = useState<drop[]>([]);
+    const [collections, setCollections] = useState<collection[]>([]);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
+    console.log(user)
+    const categories: category[] = ['drops', 'collections'];
 
     const params = useParams();
 
+    const username = params.username?.substring(1);
+
+    const navigate = useNavigate();
     const location = useLocation();
 
     const _id = getKey('_id');
@@ -37,27 +50,43 @@ const User = () => {
     const getUser = async () => {
         if (params.username?.startsWith('@')) {
             try {
-                const username = params.username?.substring(1);
                 setIsFetching(true);
                 const response = await get(`/user/get/${username}`);
                 setIsFetching(false);
                 setUser(response.data as user);
-                try {
-                    setIsFetching(true);
-                    const response = await get(`/drop/get/${username}`);
-                    setIsFetching(false);
-                    const drop = response.data;
-                    setDrops(drops => [...drops, ...drop]);
-                    setTotalPage(Math.ceil((response?.data[0]?.allDrops) / 10));
-                    setPage(page => page + 1);
-                } catch (error: any) {
-                    setIsFetching(false);
-                    console.error(error.message);
-                }
             } catch (error: any) {
                 setIsFetching(false);
                 console.error(error.message);
             }
+        }
+    }
+
+    const getDrops = async () => {
+        if (params.username?.startsWith('@')) {
+            try {
+                setIsFetching(true);
+                const response = await get(`/drop/get/${username}?page=${page}`);
+                setIsFetching(false);
+                const drop = response.data;
+                setDrops(drops => [...drops, ...drop]);
+                setPage(page => page + 1);
+                setTotalPage(Math.ceil((response?.data[0]?.allDrops) / 10));
+            } catch (error: any) {
+                setIsFetching(false);
+                console.error(error.message);
+            }
+        }
+    }
+
+    const getCollections = async () => {
+        if (params.username?.startsWith('@')) {
+            setIsFetching(true);
+            const response = await get(`/collection/get/${username}?page=${page}`);
+            setIsFetching(false);
+            const collection = response.data.collections;
+            setCollections(collections => [...collections, ...collection]);
+            setPage(page => page + 1);
+            setTotalPage(Math.ceil((response?.data?.allCollections) / 10));
         }
     }
 
@@ -93,24 +122,44 @@ const User = () => {
         }
     }
 
-    const getScroll = () => {
-        if (page <= totalPage) {
-            if (Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.scrollHeight) {
-                getUser();
-            }
-        }
-    }
+    // const getScroll = () => {
+    //     if (page <= totalPage) {
+    //         if (Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.scrollHeight) {
+    //             getUser();
+    //         }
+    //     }
+    // }
 
     useEffect(() => {
-        window.addEventListener('scroll', getScroll);
-        return () => {
-            window.removeEventListener('scroll', getScroll);
+        setDrops([]);
+        setCollections([]);
+        setPage(0);
+        if (category === 'drops') {
+            getDrops();
         }
-    }, [isFetching, page, totalPage]);
+        if (category === 'collections') {
+            getCollections();
+        }
+    }, [category, location.pathname]);
+
+    // useEffect(() => {
+    //     window.addEventListener('scroll', getScroll);
+    //     return () => {
+    //         window.removeEventListener('scroll', getScroll);
+    //     }
+    // }, [isFetching, page, totalPage]);
 
     useEffect(() => {
+        setUser(null);
+        setDrops([]);
+        setCollections([]);
         getUser();
-        // getDrops();
+    }, [location.pathname]);
+
+    useEffect(() => {
+        if (!params.username?.startsWith('@')) {
+            navigate(`/@${params.username}`)
+        }
     }, [location.pathname]);
 
     return (
@@ -148,8 +197,8 @@ const User = () => {
                                         </button>
                                 }
                             </span>
-                            <span className={'flex justify-between'}>
-                                <button disabled={true}>{shortener(user.drops)} Drops</button>
+                            <span className={'flex justify-center gap-6 md:gap-9'}>
+                                {/*<button disabled={true}>{shortener(user.drops)} Drops</button>*/}
                                 <Following _id={user._id} title={`${shortener(user.following)} Following`}
                                            from={'following'}/>
                                 <Following _id={user._id} title={`${shortener(user.followers)} Followers`}
@@ -158,26 +207,74 @@ const User = () => {
                         </div>
                     </div>
                     <div className={'mt-10'}>
-                        <span>Drops</span>
+                        <div className={'flex gap-10'}>
+                            {
+                                categories.map(c =>
+                                    <div className={''} key={c}>
+                                        <button
+                                            className={`capitalize ${c === category ? 'opacity-100' : 'opacity-50'} px-3 transition-all`}
+                                            onClick={() => setCategory(c)}>
+                                            {c === 'drops' && `${user?.drops} drops`}
+                                            {c === 'collections' && `${user?.collections} collections`}
+                                        </button>
+                                        {c === category &&
+                                            <div className={'mt-1 w-full h-0.5 bg-white rounded-full'}></div>}
+                                    </div>
+                                )
+                            }
+                        </div>
                     </div>
                     <div className={'mt-6 flex flex-col gap-6'}>
-                        {
-                            drops.length > 0 ?
-                                drops?.map((drop: drop) =>
-                                    <Drop drop={drop} action={getUser} key={drop._id}/>
-                                )
-                                :
-                                <span className={'opacity-60'}>not drop yet</span>
+
+                        {category === 'drops' &&
+                            <>
+                                {
+                                    drops.length > 0 ?
+                                        <InfiniteScroll isFetching={isFetching} fetch={getUser} page={page}
+                                                        totalPage={totalPage}>
+                                            <Masonry drops={drops}/>
+                                        </InfiniteScroll>
+                                        :
+                                        <span className={'opacity-60'}>not drop yet</span>
+                                }
+
+                                {user._id === _id && <div
+                                    className={'w-[90%] max-w-[30rem] m-auto fixed left-0 right-0 bottom-28 pointer-events-none'}>
+                                    <div className={'absolute right-0 w-8 h-8 pointer-events-auto rounded-full'}>
+                                        <CreateDropPopup/>
+                                    </div>
+                                </div>}
+                            </>
                         }
-                        {isFetching && <div className={'m-auto dots-3'}></div>}
+
+                        {category === 'collections' &&
+                            <>
+                                {
+                                    collections.length > 0 ?
+                                        <InfiniteScroll isFetching={isFetching} fetch={getCollections} page={page}
+                                                        totalPage={totalPage}>
+                                            <Collections collections={collections} _id={user?._id}/>
+                                        </InfiniteScroll>
+                                        :
+                                        <span className={'opacity-60'}>not collections yet</span>
+                                }
+                                {user._id === _id && <div
+                                    className={'w-[90%] max-w-[30rem] m-auto fixed left-0 right-0 bottom-28 pointer-events-none'}>
+                                    <div
+                                        className={'absolute right-0 w-8 h-8 pointer-events-auto rounded-full'}>
+                                        <CreateCollectionModal action={getCollections}/>
+                                    </div>
+                                </div>}
+                            </>
+                        }
                     </div>
                 </Container> :
-                <Container className={'h-dvh flex items-center justify-center text-xl'}>
+                <Container className={'h-dvh flex items-center justify-center'}>
                     {
                         isFetching ?
                             <div className={'py-1.5 flex justify-center'}>
                                 <div className={'dots-3'}></div>
-                            </div> : <div>user not found</div>
+                            </div> : <div className={'text-xl opacity-65'}>user not found</div>
                     }
                 </Container>
             }

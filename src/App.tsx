@@ -1,7 +1,9 @@
+// utils utilities
+
 import './App.css';
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 import Layout from './Layout.tsx';
-import {Create, Home, Likes, Search, Settings, SignIn, SignUp, User} from './pages';
+import {Create, Drops, Home, Likes, Search, Settings, SignIn, SignUp, User} from './pages';
 
 const App = () => {
 
@@ -15,6 +17,14 @@ const App = () => {
                     element: <Home/>
                 },
                 {
+                    path: 'create',
+                    element: <Create/>
+                },
+                {
+                    path:'drop/:_id',
+                    element: <Drops/>
+                },
+                {
                     path: 'signup',
                     element: <SignUp/>
                 },
@@ -26,10 +36,11 @@ const App = () => {
                     path: 'search',
                     element: <Search/>
                 },
-                {
-                    path: 'create',
-                    element: <Create/>
-                },
+                // {
+                //     path: 'drop/create',
+                //     element: <Create/>
+                // },
+
                 {
                     path: 'settings',
                     element: <Settings/>

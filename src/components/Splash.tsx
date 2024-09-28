@@ -1,8 +1,10 @@
 import {useEffect, useState} from "react";
 import drop from '../assets/drop.png';
+import {get} from "../utils/fetch.ts";
 
 const Splash = () => {
 
+    const [isFetching, setIsFetching] = useState(true);
     const [splash, setSplash] = useState(true);
     const [toggle, setToggle] = useState(true);
 
@@ -16,7 +18,15 @@ const Splash = () => {
 
     useEffect(() => {
         const remove = setTimeout(() => {
-            active();
+            (async () => {
+                try {
+                    await get('');
+                    setIsFetching(false);
+                    active();
+                } catch (e) {
+
+                }
+            })()
         }, 900);
         return () => {
             clearTimeout(remove);
@@ -36,6 +46,7 @@ const Splash = () => {
                         <div className={'text-3xl'}>
                             backdrops
                         </div>
+                        {isFetching && <div className={'mx-auto dots-3'}></div>}
                     </div>
                 </div>
             }

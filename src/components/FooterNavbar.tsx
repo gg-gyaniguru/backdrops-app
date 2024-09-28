@@ -1,7 +1,7 @@
 import {getKey} from "../utils/local.ts";
 import Container from "./Container.tsx";
 import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {get} from "../utils/fetch.ts";
 import home from '../assets/home.png';
 import search from '../assets/search.png';
@@ -16,6 +16,7 @@ const FooterNavbar = () => {
 
     const _id = getKey('_id');
 
+    const location = useLocation();
     const navigate = useNavigate();
 
     const getUsername = async () => {
@@ -31,6 +32,14 @@ const FooterNavbar = () => {
         }
     }
 
+    // useEffect(() => {
+    //     if (location.pathname.startsWith('/create')) {
+    //         if (username !== 'radha') {
+    //             navigate('/')
+    //         }
+    //     }
+    // }, [location.pathname]);
+
     useEffect(() => {
         getUsername();
     }, []);
@@ -38,7 +47,7 @@ const FooterNavbar = () => {
     return (
         <>
             <Container
-                className={'p-3 fixed left-0 bottom-0 right-0 z-[99999] bg-white/30 rounded-t-3xl backdrop-blur-sm'}>
+                className={'p-3 fixed left-0 bottom-0 right-0 z-[999] bg-white/30 rounded-t-3xl backdrop-blur-sm'}>
                 <div className={'flex justify-center gap-9 sm:gap-12'}>
                     <Link to={'/'}>
                         <img className={'w-6 h-6'} src={home} alt={''}/>
