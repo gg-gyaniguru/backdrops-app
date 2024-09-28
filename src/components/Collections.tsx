@@ -10,7 +10,6 @@ interface Collections {
 
 
 const Collections = ({collections, _id}: Collections) => {
-    // console.log(collections);
     const [columns, setColumns] = useState(2);
 
     const getColumns = () => {

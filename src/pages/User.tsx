@@ -35,7 +35,7 @@ const User = () => {
     const [collections, setCollections] = useState<collection[]>([]);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    console.log(user)
+
     const categories: category[] = ['drops', 'collections'];
 
     const params = useParams();

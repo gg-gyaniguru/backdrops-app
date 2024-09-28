@@ -44,7 +44,6 @@ const GetCollection = ({button, user, _id, name}: GetCollection) => {
     const user_id = getKey('_id');
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    // console.log(page, totalPage)
     const action = async () => {
         try {
             setIsFetching(true);
